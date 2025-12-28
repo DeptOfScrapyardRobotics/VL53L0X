@@ -1,0 +1,45 @@
+{
+    "name": "dept-of-scrapyard-robotics/vl53l0x",
+    "description": "ScrapyardIO Framework extension library that enables  I2C Control of VL53L0X Time-of-Flight Sensors on Linux",
+    "type": "library",
+    "version": "0.1.0",
+    "keywords": [
+        "io",
+        "linux",
+        "embedded",
+        "i2c",
+        "distance",
+        "time-of-flight",
+        "vl53l0x"
+    ],
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Project Saturn Studios, LLC",
+            "email": "angel@projectsaturnstudios.com"
+        }
+    ],
+    "require": {
+        "php": "^8.3",
+        "dept-of-scrapyard-robotics/distance": "^0.1.0",
+        "dept-of-scrapyard-robotics/scrapyard-io-framework": "^0.1.0"
+    },
+    "require-dev": {
+        "mockery/mockery": "^1.6",
+        "orchestra/testbench": "*",
+        "pestphp/pest": "^4.0",
+        "pestphp/pest-plugin-laravel": "^4.0",
+        "phpunit/phpunit": "^12.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "ScrapyardIO\\Sensors\\Distance\\VL53L0X\\": "src"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Tests\\": "tests"
+        }
+    },
+    "minimum-stability": "stable"
+}
