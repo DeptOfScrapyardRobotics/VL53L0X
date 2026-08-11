@@ -2,7 +2,7 @@
 
 namespace DeptOfScrapyardRobotics\Sensors\VL53Lxx;
 
-use Fabricate\Contracts\Circuits\CircuitException;
+use GeneralPurposeIO\Contracts\Circuits\CircuitException;
 
 class VL53LxxException extends CircuitException
 {

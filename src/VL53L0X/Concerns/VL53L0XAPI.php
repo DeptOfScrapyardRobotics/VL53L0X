@@ -5,7 +5,7 @@ namespace DeptOfScrapyardRobotics\Sensors\VL53Lxx\VL53L0X\Concerns;
 use DeptOfScrapyardRobotics\Sensors\VL53Lxx\VL53L0X\Enums\VL53L0XOpCode;
 use DeptOfScrapyardRobotics\Sensors\VL53Lxx\VL53L0X\Enums\VL53L0XP1CommandRegister;
 use DeptOfScrapyardRobotics\Sensors\VL53Lxx\VL53L0X\Exceptions\VL53L0XException;
-use Fabricate\Contracts\NutsAndBolts\BootScaffolding;
+use GeneralPurposeIO\Contracts\Circuits\BootScaffolding;
 
 trait VL53L0XAPI
 {

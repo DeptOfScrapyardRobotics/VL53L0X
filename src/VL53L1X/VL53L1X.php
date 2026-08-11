@@ -7,15 +7,18 @@ use DeptOfScrapyardRobotics\Sensors\VL53Lxx\VL53L1X\Enums\VL53L1XI2CAddress;
 use DeptOfScrapyardRobotics\Sensors\VL53Lxx\VL53L1X\Exceptions\VL53L1XException;
 use DeptOfScrapyardRobotics\Sensors\VL53Lxx\VL53LxxCarrierTransport;
 use Exception;
-use Fabricate\Contracts\Circuits\Attributes\IntegratedCircuit;
-use Fabricate\Contracts\Circuits\IntegratedCircuit as CircuitContract;
-use Fabricate\Contracts\NutsAndBolts\BootSequence;
-use Fabricate\Contracts\Sensors\Enums\DistanceUnit;
-use Fabricate\Contracts\Sensors\Interfaces\Rangefinder;
+use GeneralPurposeIO\Circuits\Types\SensorIC;
+use GeneralPurposeIO\Contracts\Circuits\Attributes\IntegratedCircuit;
+use GeneralPurposeIO\Contracts\Circuits\Attributes\Pinout;
+use GeneralPurposeIO\Contracts\Circuits\BootSequence;
 use GeneralPurposeIO\Digital\DigitalIO;
 use GeneralPurposeIO\Digital\DigitalOutputPin;
 use GeneralPurposeIO\I2C\I2C;
 use GeneralPurposeIO\I2C\I2CSlave;
+use Waveforms\Contracts\Distance\DistanceUnit;
+use Waveforms\Contracts\Distance\MaxDistance;
+use Waveforms\Contracts\Distance\MeasuresDistance;
+use Waveforms\Contracts\Distance\MinDistance;
 
 /**
  * VL53L1X single-zone ToF rangefinder.
@@ -24,10 +27,17 @@ use GeneralPurposeIO\I2C\I2CSlave;
  * XSHUT (+ boot_now). The L1X firmware loads a fixed default configuration in
  * boot(); there are no L0X-style sequence/limit injectables in this driver.
  */
-#[IntegratedCircuit('I2C')]
-class VL53L1X implements CircuitContract, BootSequence, Rangefinder
+#[IntegratedCircuit('I2C', ['I2C', 'DigitalIO'])]
+#[Pinout(
+    ['I2C' => ['driver', 'device', 'slave']],
+    ['I2C' => ['driver', 'device', 'slave'], 'DigitalIO' => ['driver', 'device', 'xshut']],
+)]
+class VL53L1X extends SensorIC implements BootSequence, MeasuresDistance
 {
     use VL53L1XAPI;
+
+    #[MaxDistance] protected $max_distance = 4000;
+    #[MinDistance] protected $min_distance = 40;
 
     /**
      * @throws Exception
@@ -64,20 +74,9 @@ class VL53L1X implements CircuitContract, BootSequence, Rangefinder
     /**
      * @throws VL53L1XException
      */
-    public function distance(DistanceUnit $unit): float
+    public function distance(DistanceUnit $unit = DistanceUnit::MM): float
     {
-        $mm = $this->readRange();
-
-        return match ($unit) {
-            DistanceUnit::CM => $mm / 10.0,
-            DistanceUnit::M => $mm / 1000.0,
-            DistanceUnit::IN => $mm / 25.4,
-            DistanceUnit::FT => $mm / 304.8,
-            DistanceUnit::YD => $mm / 914.4,
-            DistanceUnit::uM => $mm * 1_000.0,
-            DistanceUnit::nM => $mm * 1_000_000.0,
-            default => (float) $mm,
-        };
+        return $unit->convertFromMm((float) $this->readRange());
     }
 
     public function close(): void

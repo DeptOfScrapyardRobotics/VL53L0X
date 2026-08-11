@@ -3,7 +3,7 @@
 namespace DeptOfScrapyardRobotics\Sensors\VL53Lxx\VL53L1X\Concerns;
 
 use DeptOfScrapyardRobotics\Sensors\VL53Lxx\VL53L1X\Exceptions\VL53L1XException;
-use Fabricate\Contracts\NutsAndBolts\BootScaffolding;
+use GeneralPurposeIO\Contracts\Circuits\BootScaffolding;
 
 trait VL53L1XAPI
 {

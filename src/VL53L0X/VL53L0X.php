@@ -7,20 +7,30 @@ use DeptOfScrapyardRobotics\Sensors\VL53Lxx\VL53L0X\Enums\VL53L0XI2CAddress;
 use DeptOfScrapyardRobotics\Sensors\VL53Lxx\VL53L0X\Exceptions\VL53L0XException;
 use DeptOfScrapyardRobotics\Sensors\VL53Lxx\VL53LxxCarrierTransport;
 use Exception;
-use Fabricate\Contracts\Circuits\Attributes\IntegratedCircuit;
-use Fabricate\Contracts\Circuits\IntegratedCircuit as CircuitContract;
-use Fabricate\Contracts\NutsAndBolts\BootSequence;
-use Fabricate\Contracts\Sensors\Enums\DistanceUnit;
-use Fabricate\Contracts\Sensors\Interfaces\Rangefinder;
+use GeneralPurposeIO\Circuits\Types\SensorIC;
+use GeneralPurposeIO\Contracts\Circuits\Attributes\IntegratedCircuit;
+use GeneralPurposeIO\Contracts\Circuits\Attributes\Pinout;
+use GeneralPurposeIO\Contracts\Circuits\BootSequence;
 use GeneralPurposeIO\Digital\DigitalIO;
 use GeneralPurposeIO\Digital\DigitalOutputPin;
 use GeneralPurposeIO\I2C\I2C;
 use GeneralPurposeIO\I2C\I2CSlave;
+use Waveforms\Contracts\Distance\DistanceUnit;
+use Waveforms\Contracts\Distance\MaxDistance;
+use Waveforms\Contracts\Distance\MeasuresDistance;
+use Waveforms\Contracts\Distance\MinDistance;
 
-#[IntegratedCircuit('I2C')]
-class VL53L0X implements CircuitContract, BootSequence, Rangefinder
+#[IntegratedCircuit('I2C', ['I2C', 'DigitalIO'])]
+#[Pinout(
+    ['I2C' => ['driver', 'device', 'slave']],
+    ['I2C' => ['driver', 'device', 'slave'], 'DigitalIO' => ['driver', 'device', 'xshut']],
+)]
+class VL53L0X extends SensorIC implements BootSequence, MeasuresDistance
 {
     use VL53L0XAPI;
+
+    #[MaxDistance] protected $max_distance = 2000;
+    #[MinDistance] protected $min_distance = 30;
 
     /**
      * @throws Exception
@@ -65,20 +75,9 @@ class VL53L0X implements CircuitContract, BootSequence, Rangefinder
     /**
      * @throws VL53L0XException
      */
-    public function distance(DistanceUnit $unit): float
+    public function distance(DistanceUnit $unit = DistanceUnit::MM): float
     {
-        $mm = $this->readRange();
-
-        return match ($unit) {
-            DistanceUnit::CM => $mm / 10.0,
-            DistanceUnit::M => $mm / 1000.0,
-            DistanceUnit::IN => $mm / 25.4,
-            DistanceUnit::FT => $mm / 304.8,
-            DistanceUnit::YD => $mm / 914.4,
-            DistanceUnit::uM => $mm * 1_000.0,
-            DistanceUnit::nM => $mm * 1_000_000.0,
-            default => (float) $mm,
-        };
+        return $unit->convertFromMm((float) $this->readRange());
     }
 
     public function close(): void

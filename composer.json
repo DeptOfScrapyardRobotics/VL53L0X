@@ -1,13 +1,12 @@
 {
     "name": "dept-of-scrapyard-robotics/vl53lxx",
-    "description": "Drive VL53Lxx time-of-flight distance sensors over I2C with PHP",
+    "description": "Drive VL53L0X and VL53L1X time-of-flight distance sensors over I2C with PHP",
     "type": "library",
-    "version": "0.6.0",
+    "version": "0.7.0",
     "keywords": [
         "vl53l0x",
         "vl53l1x",
         "tof",
-        "framework",
         "scrapyard-io"
     ],
     "license": "MIT",
@@ -19,16 +18,19 @@
         }
     ],
     "require": {
-        "php": "^8.3",
-        "fabricate/circuits": "^0.6.0",
-        "gpio/contracts": "^0.6.0",
-        "gpio/i2c": "^0.6.0",
-        "gpio/digital": "^0.6.0",
-        "fabricate/nuts-and-bolts": "^0.6.0"
+        "php": "^8.4|^8.5|^8.6",
+        "gpio/circuits": "^0.7.0",
+        "gpio/i2c": "^0.7.0",
+        "gpio/digital": "^0.7.0",
+        "gpio/contracts": "^0.7.0",
+        "waveforms/contracts": "^0.7.0",
+        "fabricate/nuts-and-bolts": "^0.7.0"
     },
     "suggest": {
-        "microscrap/i2c": "^0.5.0 - For direct linux-based I2C",
-        "microscrap/mpsse": "^0.5.0 - For I2C over an FTDI Serial-to-USB Device"
+        "microscrap/i2c": "^0.7.0 - POSIX I2C",
+        "microscrap/mpsse": "^0.7.0 - I2C over FTDI MPSSE",
+        "scrapyard-io/tubes": "^0.7.0 - VL53L1X OLED / canvas demo sketches",
+        "scrapyard-io/ux": "^0.7.0 - binds over vl53l1x-canvas-demo with a UX Scene HUD"
     },
     "autoload": {
         "psr-4": {
@@ -40,18 +42,18 @@
             "DeptOfScrapyardRobotics\\Tests\\": "tests/"
         }
     },
-    "config": {
-        "sort-packages": true
-    },
     "extra": {
         "branch-alias": {
-            "dev-master": "0.6.x-dev"
+            "dev-master": "0.7.x-dev"
         },
         "scrapyard-io": {
             "providers": [
-                "DeptOfScrapyardRobotics\\Sensors\\VL53Lxx\\VL53LxxServiceProvider"
+                "DeptOfScrapyardRobotics\\Sensors\\VL53Lxx\\Providers\\VL53LxxServiceProvider"
             ]
         }
+    },
+    "config": {
+        "sort-packages": true
     },
     "minimum-stability": "dev",
     "prefer-stable": true
